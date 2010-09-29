@@ -1,0 +1,306 @@
+/* 
+	styles for the psuedo-select box 
+*/
+div.mcdropdown {
+	position: absolute;
+	border: 1px solid #8e9daa;
+	padding: 3px;
+	display: -moz-inline-block;
+	display: inline-block;
+	width: 230px;
+	height: 14px;
+	padding: 3px;
+}
+
+/* style either the input or div where the plug-in is attached to */
+div.mcdropdown input, 
+div.mcdropdown div {
+	position: absolute;
+	background-color: #fff;
+	left: 0;
+	top: 0;
+	width: 98%;
+	border: 0;
+	padding: 3px 0 0 3px;
+	font: 11px Arial, Helvetica, sans-serif;
+}
+
+div.mcdropdown a {
+	position: absolute;
+	right: 1px;
+	top: 1px;
+	/*background: transparent url(data:image/gif;base64,R0lGODlhDwAwAPcAANHY6sPM4OTt9Nbj78LQ5tDi7s/Y6+Hs88bO4am00+Dq8p2p0MbQ55+q0MzV6dXi7tPj7sfR5sfR6MXQ5snT6NLa7Ku11cPQ5s/X6tfj75ynzZOozNjk7+Xv9pylzOz1+aGuyKSvyaWxys3X6sXO4tnh793o8aWw0LK618LL36eyyr3I3trl8LC61Z+qzpedvrzH3efx9tPb7d7q8snS5qSw0vD5+9bd7srd67C518DN5La/2Orz+Nvp8sbU6NXd7ZKjy7/J3Nbp8piqztvn8cLM4cnV6NHi7trr866206O0046UucjV6Zmr0N3p86Csz6iy0tjf7qaz0brC2aOwy+bv9b3L4q+51Jugv9/q87/J2pqp0NLa6pOZvKqwx6ax08HL3fP7/MPP5paqzpSjzKm1ztzj8Jupz56syLG80sHL4ODk7sfQ5M3V57W+14eQuKCtyZyqxNff7s7X68XS546dyaOvyJ6sx+ny94+WutTm8Ky3z5mlzM7W6vn+/r/O5N7j7bS82IGJtKiz07W/2pupx7rG39Ha66ev0czU4Kq2z83f7OHn84aaxr7J4OTw9rjA2cTN4bG618HP5bbA1aGmxM7g7cPN4tPa7MHJ3t7r89je5ZemzJekzNHe7Z+uz8na6qezzJGYut7p8r3K4eru9pGdyf7//6KuyoOLtqev0Kuz1KKtz87i7o2iyr/N5OHm8MHL4oqcyMrR3sfQ35mmxYmRuMPS577F24yeycvU6MTP5ouSuJ2qxcLP5dzo8qSsz8bN2qWz07W5y9/l8aKvybjE3dTi79Xb48PO5IWOtsnP24iQt8DL4aCqxZWlzLzH3o2hysDE0ZekwuPs9MbR54WVxebr9dPn8ejx96Ctx/b9/dng77/K4FhjdAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAAAAAAALAAAAAAPADAAAAj/AEuV4NKGBg02JC4VKRKrGzRYJa4xMlOiRJQbMg4dMuAgQgAujIhxu4GxAoY+fRxQiECiDcUfFWICoCChpoQICGhEkSMDgE8AEhgwmCA0504Z3n4G9UaUAQI2P354m1pBwoSpTCcguFQBEyasDrBe2DWBRJGfYbF6u8BWTKRmGOLGxWrECFtfahw5MMDXwBxvTAgIJqCjm96+fkcEHlzYEAUHDkZIVuzDx60/r7oZYkBBF4XPRnzQoUPgj5UVxpJNiMA6QjUxkybpsEIKxppMKQLoDpCim+9uK2AAQqaFUpo9e8qEEkGFCio4hWZpOeUnjA0bH3jEePTogIkMISj5/9lmg4f2DgrSm2CRQUQa63g6yKfGgoN9DhlUKPrwIYaA/wJwMMAADwyoH38xeAOggN4UOIAKZeCRDVYdOPEAVg88oIIIHVRRBVZOYAXBMQ8wB2CIakGgIgQiwJHei1j10IOKRxSDhgkH5HhAFt4gUcCPBVgCwo067jiDj0AKWQgLJowyw5OaICGEENi0gsMdtQzAwi9EdNmDEHroUcAiOPQyjScPZKAmgRAccQSZoMSxjDN2hGBnCHaAoKc2d8QRjDReVILFCy90IUoeSyzBCzPKDOOFNY3kAgQQZHDChweYdmJKAJU0Es0GY4wxxCdPlMqKC3yQgIUsrmwwxBBKCLQjxayqnOACAi/UscEGTTShxCAWJCBsAifgqusG3vgKbALeCFtsF0A8g1UNNayCFRRQIJAHGVtsMS1WOSSRBAlLLHDGGTWo5c0XKKDQQiS2LCCvvFhJIkkggeygxhsNNLBAvxp4k4MFFqBAyBTd8OsvwF8MXPDB3aTigQYUa+ACMC1kvEMQYHQjiAcunIAIIlAk4QYkkOBCSyIrfHxCAldc4cYOUwTBcSKb2Ibbbrz9BpxwAQEAOw==) no-repeat top left;*/
+	background: transparent url(../images/mcdropdown/mcdd_select_button_sprite.gif) no-repeat top left;
+	display: -moz-inline-block;
+	display: inline-block;
+	height: 16px;
+	width: 15px;
+	text-decoration: none;
+	font-size: 0pt;
+	z-index: 2;
+	outline: 0;
+}
+
+div.mcdropdown a:hover, div.mcdropdown a:focus {
+	background-position: 0% -16px;
+}
+
+div.mcdropdown a:active {
+	background-position: 0% -32px;
+	outline: none; /* hide dotted outline in Firefox */
+}
+
+div.mcdropdownDisabled {
+	background-color: #e1e0e0;
+	filter:alpha(opacity=75);
+	-moz-opacity: 0.75;
+	opacity: 0.75;
+	-khtml-user-select: none;
+	-o-user-select: none;
+	-moz-user-select: none;
+	-moz-user-focus: ignore; 
+	-moz-user-input: disabled; 
+}
+
+div.mcdropdownDisabled input {
+	cursor: default;
+}
+
+div.mcdropdownDisabled a:hover, div.mcdropdownDisabled a:focus {
+	background-position: 0 0;
+	cursor: default;
+}
+
+/* 
+	styles for the dropdown menu 
+*/
+ul.mcdropdown_menu {
+	display: none;
+	margin: 5px 1px;
+	padding: 0px;
+	list-style-type: none;
+	/* float so we can calculate the size of the columns */
+	float: left;
+	clear: both;
+	z-index: 10000;
+	-khtml-user-select: none;
+	-o-user-select: none;
+	-moz-user-select: none;
+	-moz-user-focus: ignore; 
+	-moz-user-input: disabled; 
+}
+
+ul.mcdropdown_menu ul {
+	display: none;
+	font: 11px Arial, Helvetica, sans-serif;
+	/* float so we can calculate the size of the columns */
+/*
+	float: left;
+*/
+}
+
+/* -- Sub-Menus -- */
+ul.mcdropdown_menu ul {
+	position: absolute;
+	list-style-type: none;
+	margin: 0px;
+	margin-left: 30px;
+	padding: 0px;
+	z-index: 10000;
+}
+ul.mcdropdown_menu ul li {
+	margin: 0px;
+	min-width: 150px;
+	_width: 150px; /* ie6 min-width hack */
+}
+
+
+/* color schema */
+ul.mcdropdown_menu {
+/*
+	height: 19px;
+*/
+	height: auto;
+	background-color: #e1e0e0;
+	padding: 5px 5px;
+	/* define font here for IE6 */
+	font: 11px Arial, Helvetica, sans-serif;
+}
+
+ul.mcdropdown_menu li {
+	padding: 2px 20px 2px 6px;
+}
+
+/* we don't use "ul.mcdropdown_menu > li" here so that IE6 knows how to style the root level */
+ul.mcdropdown_menu li.mc_root {
+	cursor: pointer;
+	white-space: nowrap;
+	color: #666;
+	border-top: 1px solid #fff;
+	padding: 2px 20px 2px 6px;
+	margin: 0 10px;
+}
+
+ul.mcdropdown_menu > li.mc_endcol {
+	border-bottom: 1px solid #fff;
+}
+
+/* this is for IE6 only */
+ul.mcdropdown_menu li.mc_hover {
+	background-color: #ccc !important;
+}
+
+ul.mcdropdown_menu > li:hover {
+	border-top: 1px solid #999;
+	background-color: #999 !important;
+	color: #fff;
+}
+
+ul.mcdropdown_menu > li:hover.mc_endcol {
+	border-bottom: 1px solid #999;
+}
+
+ul.mcdropdown_menu > li:hover + li:not(.mc_firstrow) {
+	border-top: 1px solid #999;
+}
+
+ul.mcdropdown_menu li.mc_parent {
+	padding-right: 20px !important;
+	background: url(../images/mcdropdown/mcdd_icon_normal.gif) no-repeat 100% 50%;
+	/*background: transparent url( data:image/gif;base64,R0lGODlhEgASALMPAJ2dnZycnN/e3qWlpdjX18zLy7+/v9nY2KSkpM7OzrGwsK6urr29vdfW1pmZmeHg4CH5BAEAAA8ALAAAAAASABIAAAQm8MlJq7046827Ld4ELEQIOIEhdKfjDAfXIgkbMGunNGHv/8AgJwIAOw==) no-repeat 100% 50%;
+	*/											   
+}
+
+ul.mcdropdown_menu li:hover.mc_parent {
+	background: #999 url(../images/mcdropdown/mcdd_icon_hover.gif) no-repeat 100% 50% !important;
+	/*background: #999 url( data:image/gif;base64, R0lGODlhEgASANUgAIaGhpOTk319fYCAgJKSkpeXl3Z2do6Ojnx8fJmZmXt7e5WVlYKCgnh4eLu6utnY2H9/f97d3ZWUlMbGxpaWlqGhoZSUlNLR0cnIyISEhJiYmI2NjXl5ea6uruHg4HV1dZmZmQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACH5BAEAACAALAAAAAASABIAAAZqQJBwSCwaj8iksnhgIASAgJIi+FivAGRBce1+skaA1yslJhqfgGe9nljBw8XVwY5krIJi4Dp4rDtXCEUFXRUeFxxXDEYDVwYYEl0HRgQGVxBdAglHG5ZeCgtJBI1WDQAFSyAaBBaprq9FQQA7) no-repeat 100% 50% !important;*/
+	color: #fff !important;
+}
+
+ul.mcdropdown_menu ul {
+	background: #f0f0f0;
+	/* add a slight border for better visualization of deep menus */
+	border: 1px solid #d0d0d0;
+	padding-bottom: 10px;
+	/* IE 6/7 will bleed through the background color if we don't set the visibility to hidden */
+	visibility: hidden;
+}
+
+ul.mcdropdown_menu ul li {
+	background: #f0f0f0;
+	padding-left: 16px !important;
+	border-top: 1px solid #fff;
+	color: #666;
+	white-space: nowrap;
+}
+
+ul.mcdropdown_menu ul li.mc_firstrow {
+	border-top: 1px solid #f0f0f0;
+}
+
+ul.mcdropdown_menu ul li.mc_endcol {
+	border-bottom: 1px solid #fff;
+}
+
+ul.mcdropdown_menu ul li:hover {
+	background-color: #d6d6d6;
+	border-top: 1px solid #dedede;
+	color: #666;
+}
+
+ul.mcdropdown_menu ul li.mc_endcol:hover {
+	border-bottom: 1px solid #dedede;
+}
+
+ul.mcdropdown_menu ul li:hover + li:not(.mc_firstrow) {
+	border-top: 1px solid #dedede;
+}
+
+/*
+ * drop down shadows
+ */
+div.mcdropdown_shadow {
+	display: none;
+	position: absolute;
+	margin: 3px 0 0 3px;
+	/* for IE6, we use just a square transparent image */
+	background: #000;
+	filter :alpha(opacity=33);
+}
+
+/* ie6 ignores this selector */
+html>body div.mcdropdown_shadow {
+	/* let's use a transparent PNG */
+	margin: 5px 0 0 5px;
+	padding: 5px 0 0 5px;
+	/*background: transparent url( data:image/png;base64,)right bottom no-repeat !important;*/
+	background: transparent url(../images/mcdropdown/shadow.png) right bottom no-repeat !important;
+	/* remove the filter for IE7 */
+	filter: none;
+}
+
+/* 
+ * styles for the dropdown menu 
+ */
+/* autocomplete styles */
+ul.mcdropdown_autocomplete {
+	display: block;
+	position: absolute;
+	height: auto;
+	max-height: 210px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	clear: both;
+	padding: 5px 10px;
+	background-color: #e1e0e0;
+	z-index: 10000;
+
+	margin: 0px;
+	list-style-type: none;
+	width: 392px;
+	font: 11px Arial, Helvetica, sans-serif;
+}
+
+ul.mcdropdown_autocomplete ul {
+	display: none;
+	list-style-type: none;
+	margin: 0px;
+	padding: 0px;
+}
+ul.mcdropdown_autocomplete ul li {
+	margin: 0px;
+}
+
+ul.mcdropdown_autocomplete li {
+  display: block;
+	font: 11px Arial, Helvetica, sans-serif;
+	cursor: pointer;
+	white-space: nowrap;
+	color: #666;
+	border-top: 1px solid #fff;
+	padding: 2px 26px 2px 6px;
+}
+
+ul.mcdropdown_autocomplete li.mc_endcol {
+	border-bottom: 1px solid #fff;
+}
+
+ul.mcdropdown_autocomplete li.mc_parent {
+	padding-right: 20px !important;
+	background: url(../images/mcdropdown/mcdd_icon_normal.gif) no-repeat 100% 50%;
+}
+
+ul.mcdropdown_autocomplete li.mc_hover {
+	border-top: 1px solid #999;
+	background-color: #999 !important;
+	color: #fff;
+}
+
+ul.mcdropdown_autocomplete li.mc_hover_parent {
+	background: #999 url(../images/mcdropdown/mcdd_icon_hover.gif) no-repeat 100% 50% !important;
+	color: #fff !important;
+}
+
+
+
+

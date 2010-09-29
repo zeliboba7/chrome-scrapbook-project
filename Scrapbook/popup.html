@@ -1,0 +1,326 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>Scrapbook!</title>
+
+	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.1.custom.css" media="screen">
+	<script src="js/jquery-blink.js" language="javscript" type="text/javascript"></script>
+	<script type="text/javascript" src="js/jquery.mcdropdown.js"></script>
+	<script type="text/javascript" src="js/jquery.bgiframe.js"></script>
+	<link type="text/css" href="css/jquery.mcdropdown.css" rel="stylesheet" media="all" />
+	
+	<script type="text/javascript" src="frontend.js"></script>
+	<script type="text/javascript" src="sbstorage.js"></script>
+	<script type="text/javascript" src="popup.js"></script>
+	
+	<!-- Core files for alert boxes-->
+	<script src="js/jquery.alerts.js" type="text/javascript"></script>
+	<link href="css/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
+	<style type="text/css">			
+		
+		body{ font: 85% "Trebuchet MS", sans-serif ; margin: 5px;  min-width:357px;
+		overflow-x:hidden;}			
+		.image-add-folder {position: absolute; right: 91px ; width:19px; height:18.5px;}
+		.image-refresh-book {position: absolute; right: 91px ; width:19px; height:18.5px;}
+		#sbsavepage {height: 20px; position: absolute; right: 213px; top: 7px; width: 21px;}
+		#refreshBooktext  {height: 20px; position: absolute; right: 85px; top: 7px; width: 21px;}
+	</style>
+</head>	
+<script>
+
+
+//Scrap the page data...
+function scrapPage(){
+	
+	
+	var temp = function(){
+		chrome.tabs.getSelected(null, function(tab) {
+			
+			var params ={};
+			params.url = tab.url;
+			var title = document.getElementById('PageName'); 
+			
+			
+			if(!title || title.value.trim()==""){
+				jAlert('Please enter a page name to save.');
+				return;
+			}
+			title = title.value.trim()||tab.title;
+			//If the page was already scrapped and the scrapPage bitton is pressed the title/folderid etc are set by init() so no need to worry here
+			params.title = title;
+			params.folderid = -1;
+			params.folderName = 'root'; //By default
+			
+			var pair =  window.bookFE.getSelectedFolder();//Return the Folder ID and the Name 
+
+			params.folderid = pair[0]==null||pair[0]==undefined || pair[0].toString().trim()==''? params.folderid : pair[0].toString().trim();
+
+			params.folderName = pair[1]==null||pair[1]==undefined  || pair[1].toString().trim()==''? params.folderName :pair[1].toString().trim();
+			console.log('Creating record for page: '+params.title +' with fid'+params.folderid);
+			
+			
+			var callme = function(){
+				if(!params.isold || (params.isold && params.overwrite)){
+						 
+						chrome.tabs.sendRequest(tab.id, {requestType:"scrap", reqParams: params}, function(response) {
+							 //TO DO display progress bar while page is scrapped...
+							 console.log('Content script says:'+response.message);
+							 
+							 if(response.status=='BAD'){
+								 window.bookFE.errorcallback(response);
+								 bgwindow.isPending  = false;
+							 }
+						})
+					}//Else dont send a request	
+			}
+			
+			isOldPageInDB ( {title: params.title,folderid: params.folderid }, function(response){
+				//save if page is new
+				if(response.status=='OK' && response.code == 1){
+					params.isold =false;
+					
+					//Ask CS to fetch data... wait in BG page...
+					callme();
+				  }
+				else{
+					jConfirm("Page "+params.title+" exists. Overwrite?", 'Confirmation Dialog', function(r) {
+						if(r==true){
+							params.isold =true;
+							params.overwrite = true;
+						}else{
+							params.isold =true;
+							params.overwrite = false;
+							bgwindow.isPending  = false;
+						}
+						if(!params.isold || (params.isold && params.overwrite)){
+							$('#scrapbutton').after('<span id="sbsavepagetext"  class = "load-sbtext" value="saving page..." > Saving page.</span>');
+							$('#sbsavepagetext').blink({delay:900});
+							callme();
+						
+						}
+					
+					})
+					
+				}
+			}
+			,function(e){
+				bgwindow.isPending  = false;//Release the lock at all errors
+				console.log(e.message)
+			  })
+			});	
+	}
+	var f = 1;
+	var bgwindow = chrome.extension.getBackgroundPage();
+	chrome.tabs.getSelected(null,function dummy(tab){
+		var m = /http:\/\/.*|file:\/\/.*|https:\/\/.*/	
+		console.log(tab.url);
+		if(!m.test(tab.url)){
+			jAlert('Cant scrap anything but a http(s) or local file page. If this is a scrapped page. Save from bottom bar.');
+			f=0;
+		}else{
+			temp();
+		}
+	})
+	
+	
+	bgwindow.isPending = true;//Serialize all requests...
+};
+
+function refreshsbook(){
+	console.log('Refreshing book...');
+	var bgwindow = chrome.extension.getBackgroundPage();
+	bgwindow.flushPageMenuCache();
+	$('#refreshBook').after('<span id="refreshBooktext"  class = "refresh-sbtext" > Refreshing</span>');
+	$('#refreshBooktext').blink({delay:900});
+	window.bookFE.renderFolders(function(){
+		bookFE.renderFullBook(function(){
+				console.log('Rendered all menus...');
+					$('#refreshBooktext').empty()
+					$('#refreshBooktext').remove()
+					$('#mcbook>div').append('<div><img id="refreshBook" title="Refresh book" src="images/refresh-icon.png" class="image-refresh-book sb_ui-corner-all  sb_ui-state-default" onclick="refreshsbook()"></div>')	
+					$('#refreshBook').hover(
+					function() { 
+						$(this).addClass('sb_ui-state-hover'); 
+					}, 
+					function() { 
+						$(this).removeClass('sb_ui-state-hover'); 
+					});	
+
+		});
+	});
+}
+
+/**Call backs from the front end when pages are selected*/
+function selectedPage(event){
+	console.log('Fetching page from SB...');
+	//Steps: Selected a new page... Get its URL of the page by using its ID. Open the page
+	//The page will send in the opentab message to the 
+	
+	var params={};
+	params.pageid = event.data.pageID //sel[0].substring(1,sel[0].length).trim();
+	var globalWindow = chrome.extension.getBackgroundPage();
+	params.callback = function(data, notedata){//data from DB...
+		
+		var noteDataToRender = notedata.rows;
+		
+		if( data.rows.item(0).data ){
+			globalWindow.dataToRender = data.rows.item(0).data;
+			globalWindow.urlOfPage = data.rows.item(0).url;
+			globalWindow.titleOfPage =  data.rows.item(0).nickname;
+			globalWindow.folderidOfPage =  data.rows.item(0).folderid;
+			globalWindow.folderNameOfPage =  data.rows.item(0).foldername;
+		}
+		
+		
+		var notesArr = new Array();
+		for(i=0; noteDataToRender!=null && noteDataToRender!=undefined && i<noteDataToRender.length;i++){//set in the popup line 253
+			notesArr[i] = noteDataToRender.item(i)
+
+		}
+		globalWindow.noteDataToRender = notesArr;
+		
+		chrome.tabs.create({url: "newpage.html"}, function(tab){});
+		
+	
+	}
+	var bgwindow = chrome.extension.getBackgroundPage();
+
+	if(!window.bookFE){
+		window.bookFE = new scrapBookFrontEnd({
+			placeholder:'messages',folderPlaceHolder :  'foldermenu', sbookPlaceHolder : 'sbookmenu' ,  
+			dbName:bgwindow.sbookInterface.sBookInterfaceData.dbName ,dbVersion:bgwindow.sbookInterface.sBookInterfaceData.dbVersion,
+			dbSize:bgwindow.sbookInterface.sBookInterfaceData.dbSize 
+		});
+		getPageDataDB(params,  window.bookFE);
+	}else{
+		getPageDataDB(params, window.bookFE);
+	}
+	
+	
+}
+
+/**callback to set the folderId when it is selected from DD...*/
+function selectedFolder(event){
+	
+	event.stopPropagation();//Get the folder we clicked
+	//Also close the menu programatically...
+	bookFE.closeAndFocus(event.data.folderName, event.data.folderId);
+	console.log('selected folder::'+event.data.folderName+' having id '+event.data.folderId);
+}
+
+/**When the icon is clicked check for selected folder and use that**/
+function addFolder(){
+	//var newFolder = window.prompt("Enter a folder name", "New Folder")
+	var pair =  window.bookFE.getSelectedFolder();//Return the Folder ID and the Name 
+	var folderId = -1;//default to root level
+	var level = 0;
+	var parentFolder = 'root';
+	
+	params ={};
+	params.parentFolderId = pair[0]==null||pair[0]==undefined || pair[0].toString().trim()==''? folderId: pair[0];
+	
+	params.parentFolder = pair[1]==null||pair[1]==undefined  || pair[1].toString().trim()==''? parentFolder :pair[1];
+
+	params.level = pair[2]==null||pair[2]==undefined  || pair[2].toString().trim()==''? level: pair[2];
+	
+	if(params.parentFolderId!=-1){
+		//Level of the new folder.
+		params.parentFolderId = params.parentFolderId.toString();
+		params.level  = (params.level +1).toString();
+	}
+	
+	console.log('Adding folder to '+params.parentFolder+' having parent ID:'+params.parentFolderId+' with ');
+	
+	jPrompt('Folder Name', 'New Folder', 'Prompt Dialog', function(r) {
+		if( r && r.toString().trim()!='' ) {
+			params.folderName = r.toString().trim();
+			
+			checkAndAddFolderDB(params, function(message){
+				if(message.code == 0){
+					
+					bookFE.callback(message);
+					var globalWindow = chrome.extension.getBackgroundPage();
+					globalWindow.flushFolderMenuCache();
+					globalWindow.flushPageMenuCache();
+					
+					bookFE.renderFolders(function(){
+						bookFE.renderFullBook(function(){
+							console.log('Done rendering menus...');
+						});
+					})
+					
+				}else if(message.code ==1){
+					
+					bookFE.callback(message);
+				
+				}
+			},function(error){
+				
+				bookFE.errorcallback(error);
+				
+			});
+		}else{
+			//bookFE.errorcallback({status:'BAD', message:'Bad folder name. Try again', code: 0});
+			return;
+		}
+	});
+	
+}
+
+
+</script>
+
+	
+
+<body onload='init()'>
+<div id='messages' class = "sb_ui-widget">
+	
+</div>
+
+
+<div>
+<button id="scrapbutton" class="sb_ui-button sb_ui-widget sb_ui-state-default sb_ui-corner-all sb_ui-button-text-only" role="button" aria-disabled="false"
+	onmousedown="scrapPage()">
+	<span class="sb_ui-button-text">Scrap This Page</span>
+</button>
+</div>
+<div>
+Enter Page Name:
+<input type="text" id="PageName" />
+</div>
+<strong title='Select a folder to save the page.'>Select folder: </strong>
+
+<div id = 'mcdfolders'>
+	<input type="text" value = '' name = 'folder' id="folder" />
+</div>
+
+<div>
+	<ul id="foldermenu" class="mcdropdown_menu" >
+	</ul>
+</div>
+
+
+
+<!--Idea is to press this marker and select an area of text-->
+
+
+
+<HR WIDTH="100%" SIZE="3"> 
+
+<strong title='Select a page to open'>My Scrapbook</strong>
+<div id ='mcbook'>
+	<input type="text" name="sbook" id="sbook" value="" size="30" onfocus="value=''"/>
+</div>
+
+<div>
+	<ul id="sbookmenu" class="mcdropdown_menu" >
+		
+		
+	</ul>
+</div>
+
+</body>
+
+</html>
