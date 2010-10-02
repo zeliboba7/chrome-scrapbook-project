@@ -53,9 +53,10 @@ function init(){
 	chrome.windows.getCurrent(function setCurrWin(windowC){
 		chrome.tabs.getSelected(windowC.id,function dummy(tabC){
 			//Send messag to CS asking for the page name...
+			var boxC = document.getElementById('PageName');
+			boxC.value = tabC.title;
 			chrome.tabs.sendRequest(tabC.id, {requestType:"getpageproperty", propName: "title"}, function(response){
 				var CSTitle = response.data;
-				var boxC = document.getElementById('PageName');
 				if(CSTitle && CSTitle.toString().trim()!=''){
 					console.log('Setting title from CS:'+CSTitle); 
 					boxC.value  = CSTitle;

@@ -1,9 +1,8 @@
 /*
- * Copyright © 2010 Eugeniy Meshcheryakov <eugen@debian.org>
- *
- * This file is licensed under GNU LGPL version 3 or later.
- * See file LGPL-3 for details.
- */
+ * This file is used to create the options page to 
+ * render the options for scrapbook management.
+ * 
+ *  */
 var saved_entries = [];
 
 /*
