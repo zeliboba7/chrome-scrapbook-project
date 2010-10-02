@@ -211,7 +211,7 @@ function scrapBookFrontEnd(params){
 						if(!isNaN(pID))
 							$(this).bind('click',{pageID:pID, pageName:$(this).text()},selectedPage);
 						else	
-							console.log('Should I be here?:: '+$(this).html());
+							console.log('I should not be here?:: '+$(this).html());
 					})
 					
 					
@@ -230,7 +230,7 @@ function scrapBookFrontEnd(params){
 			//The folder ID -1 is reserved for the place holder that represents the root.
 			//The idea is that visually root is selected it means we choose a folder in the top level
 			$('#'+self.sbookPlaceHolder).empty();
-			//TO DO: Delegate to web workers...
+			//TO DO: Delegate to web workers... 
 			$.each(sortedByLevel, function(key ,folderArr){
 				//if(key == 'level')
 				$.each(folderArr, function(){//Each folder within a level
