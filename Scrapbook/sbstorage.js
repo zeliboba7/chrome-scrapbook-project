@@ -3,7 +3,7 @@
  * Especially the ones where the entire scrapbook is rendered...
  * **/
 
-var globalWindow = chrome.extension.getBackgroundPage();
+//var globalWindow = chrome.extension.getBackgroundPage();
 
 /**Clean up of code: need to just pass 2 standard call backs i.e. Success and error callback. 
  * I have given different signatures to different functions, which I need to clean up.
@@ -84,7 +84,7 @@ function deletePagesDB(params,callback,failurecallback){
 	var pageids = params.pageids;
 	var queries = [];
 	var successCallBacks =[];
-	
+	var globalWindow = chrome.extension.getBackgroundPage();
 	
 	var ct = 0;
 	var successcallback = function(data){
@@ -113,7 +113,6 @@ function isOldPageInDB(params,callback,failurecallback){
 	
 	var nick = protectInjection(params.title);
 	var folderID = protectInjection(params.folderid);
-	
 	var queries=[
 	'select * from sbmain where nickname = \''+nick+'\' and folderid = \''+folderID+'\'' //is there the same nickname 
 	]
@@ -219,10 +218,15 @@ function overwritePageDB(params,callback, errorcallback){
 	}
 }
 
-function getFoldersDB(successcallback, errorcallback){
-		var globalWindow = chrome.extension.getBackgroundPage();
-		var wrapperdbObj =  new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData);
+function getFoldersDB(params, successcallback, errorcallback){
 		
+		var wrapperdbObj = null;
+		if(!params ||  !params.workerdbobj){
+			var globalWindow = chrome.extension.getBackgroundPage();
+			wrapperdbObj =  new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData);
+		}
+		else
+			wrapperdbObj = new wrapperDBObj(params.workerdbobj.sBookInterfaceData);
 		//wrapperObj, queries,params, successCallbacks, failureCallback,refs
 		
 		var successCallBack = function(data){
@@ -237,10 +241,14 @@ function getFoldersDB(successcallback, errorcallback){
 		
 		doDMLTransactions(wrapperdbObj, stmt, null, [successCallBack],  failureCallBack ,null);
 }
-function getPagesDB(successcallback, errorcallback){
-		var globalWindow = chrome.extension.getBackgroundPage();
-		var wrapperdbObj =  new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData);
-		
+function getPagesDB(params, successcallback, errorcallback){
+		if(!params ||  !params.workerdbobj){
+			var globalWindow = chrome.extension.getBackgroundPage();
+			wrapperdbObj =  new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData);
+		}
+		else
+			wrapperdbObj = new wrapperDBObj(params.workerdbobj.sBookInterfaceData);
+			
 		var successCallBack = function(data){
 			successcallback(data);
 		}
@@ -276,8 +284,9 @@ function getDataForOptionsPageDB(successcallback, errorcallback){
 }
 
 /***/
-function getPageDataDB(params, bookFE){
+function getPageDataDB(params, callback, faliurecallback){
 	var globalWindow = chrome.extension.getBackgroundPage();
+	
 	var wrapperdbObj =  new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData);
 	//var stmt = [ 'select sbmain.url as url ,sbpage.data as data , sbpage.annotationtype as annotationtype from sbpage inner join sbmain on sbpage.pageid = sbmain.pageid where sbmain.pageid =\''+ params.pageid+'\''];
 	var stmt =[];
@@ -292,13 +301,13 @@ function getPageDataDB(params, bookFE){
 	}
 	var secondCallback = function(notesdata){
 		notesData = notesdata;
-		params.callback(pageData, notesData);
+		callback(pageData, notesData);
 	}
 	callbacks.push(firstCallBack);
 	callbacks.push(secondCallback);
 	
 	var failureCallBack = function(e){
-		bookFE.errorcallback(e);
+		faliurecallback(e);
 		return;
 	}
 	
@@ -320,8 +329,8 @@ function checkAndAddFolderDB(params, callback, failurecallback){
 		return;
 	}
 	var callbackfinal = function(data){
-		
-		callback({status:'OK', message:'Added folder '+folderName+' to '+parentFolderName, code: 0});
+		var recid = data.insertId;	
+		callback({status:'OK', message:'Added folder '+folderName+' to '+parentFolderName, code: 0 , folderid: recid});
 	
 	}
 	var callbackexists = function(data){
@@ -340,7 +349,6 @@ function checkAndAddFolderDB(params, callback, failurecallback){
 
 /**To DO need to initialize scrapbook code properly.*/
 function createTables(){
-	
 	//wrapperobj.dbObj.transaction(function(t){
 	queries =  [
 	'create table sbfolder( folderid integer primary key asc, foldername varchar(50), level integer not null, parentid integer not null default -1, constraint ck1 unique(foldername, parentid) )', 

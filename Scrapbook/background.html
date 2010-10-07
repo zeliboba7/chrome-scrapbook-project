@@ -6,6 +6,7 @@
 	<script type="text/javascript" src="sbstorage.js"></script>
 	<script type="text/javascript" src="frontend.js"></script>
 	<script type="text/javascript" src="background.js"></script>
+	<script type="text/javascript" src="js/jquery.jstree.js"></script>
 	<script>
 		SBookInterface =function(params){
 			this.sBookInterfaceData ={
@@ -21,11 +22,56 @@
 		saveSoonParams = null;
 		cachedAnnotationData = null;
 		cachedNotesData = null;
-		//TO DO:Initilaization logic with the rendering module to display all the messages.
-		//Change the window.sbookInterface from the options page. 
-		//A default 500 MB scrapbook initiaited at the start of the program.
 		var defaultParams =  {dbName:'DefaultSbook' ,dbVersion:1.0, dbSize:5000*1024*1024 }
 		window.sbookInterface = new SBookInterface(defaultParams);
+		var w = new Worker('backgroundworker.js');
+		var initCacheFlag = false;//used first time by the popup to load cache...
+		
+		w.onmessage = function(event){
+			 /** 
+			 * cmaction: context menu action, no callbacks. I am repairing view. 
+			 * popupaction: opened a popup, call back to popup window.
+			 * latentaction: any other action that does not require a callback.
+			 */
+			 
+			 var params = event.data;
+			 switch(params.action){
+				 
+			  case 'popupaction':
+				 console.log('Done popup action');
+				 window.JSONjtreeDataCache = params.data;
+				 initCacheFlag = true;
+				 var popup = chrome.extension.getViews({type:'popup'})[0];
+				 if(popup){
+					 popup.initCompleted();
+				 }
+				 break;
+			  case 'cmaction':
+				console.log('Done Context Menu Action');
+				 initCacheFlag = true;
+				break;
+			  case 'latentaction':
+				console.log('Done latent action');
+				 initCacheFlag = true;
+				break;
+			  case 'default':
+				console.log('Cant do unknown action, I got: ')
+				console.log(params);
+				initCacheFlag = false;
+			  }
+			
+			 
+		};
+		w.onerror = function(error){
+			console.error(error);
+			initCacheFlag = false;
+		}
+		//called to redo cache
+		var cacheRedoAction = function(action){
+			
+			w.postMessage({action: action});
+		}
+		
 		
 		/*Call this from options page to change the scrapbook a v1.1 feature*/
 		function setScrapBook(params){
@@ -74,12 +120,15 @@
 				deletePagesDB(request, function(retParams){
 					console.log('Deleted some files:');
 					console.log(retParams.pageids);
-					flushPageMenuCache();
-					sendResponse(retParams);
+					//TO DO: integrate with WW.
+					redoCache(function(){;
+						sendResponse(retParams);
+					})
+					
 					},function(error){
 						
 						window.sbnotification = webkitNotifications.createNotification(
-							  'images/scrap48.jpg',  
+							  'images/scrap48.png',  
 							  'Scrapbook',  
 							  'Error while deleting pages: '+error.message  // notification body text
 						);
@@ -129,50 +178,27 @@
 					console.log('Saving new page');
 					//TO DO: Delegate heavy tasks to web workers...
 					try{
-					saveNewPageDB(params, function(params){
+					saveNewPageDB(params, function(retParams){
 							var popup = chrome.extension.getViews({type:'popup'})[0];
 							console.log('Updating cache...');
 							//Dont redo cache. Just update it.
-							console.log(window.sbookDDHTML);
-							console.log('Folder  ID:'+params.folderid);
-							console.log('pageID: '+params.pageid);
-							//console.log($(sbookDDHTML).find('li[folderid='+params.folderid+']>ul')[0])
-							/*
-							* 
-							if(params.folderid!=-1){
-								
-								sbookDDHTML = $(sbookDDHTML).find('li[folderid='+params.folderid+']>ul').append("<li rel='p"+retparams.pageid+"' pageid= '"+retparams.pageid+"' >"+params.title+"</li>").parents('#sbookmenu')[0].outerHTML;
-								//$(sbookDDHTML).find("li[rel='p"+retparams.pageid+"']").bind('click',{pageID:retparams.pageid, pageName:params.title},selectedPage);
-
-							}else{
-								sbookDDHTML = $(sbookDDHTML).append("<li rel='p"+retparams.pageid+"' pageid= '"+retparams.pageid+"' >"+params.title+"</li>").outerHTML;
-								//$(sbookDDHTML).find("li[rel='p"+retparams.pageid+"']").bind('click',{pageID:retparams.pageid, pageName:params.title},selectedPage);
-
-							}*/
+					
+							console.log('Folder ID:'+params.folderid);
+							console.log('pageID: '+retParams.pageid);
 							
-							//console.log(sbookDDHTML)
-							//TO DO: push heavy task to web workers...
-							flushPageMenuCache();
-							if(popup){
-							//Redo all cache...	
-								popup.bookFE.renderFullBook(function(){
-									console.log('Rendered page menu');
-									$(popup.document).find('#sbsavepagetext').empty()
-								    $(popup.document).find('#sbsavepagetext').remove()
-									
-									//popup.bookFE.callback({status:'OK', message:'Saved new page', code:1});
-									window.isPending  = false;
-								});
+							//TO DO If quick scrap was pressed before menu was loaded AND web worker
+							// was not completed(Cache flag). Exit(or spawn web worker again. It will just redo the cache). 
+							// User will oick it up on opening popup again...
+							//TODO: make an thread safe events.
+							redoCache(function(){
 								
-							}
-							window.sbnotification = webkitNotifications.createNotification(
-									  'images/scrap128.png',  // icon url - can be relative
-									  'Scrapbook',  // notification title
-									  'Page scrapped.'  // notification body text
-							);
-							window.sbnotification.show();
-							setTimeout('window.sbnotification.cancel()',3000)
-							window.isPending  = false;
+								if(popup){
+									popup.scrappedpage({folderid: params.folderid, pageid:retParams.pageid , title: params.title });
+									window.isPending  = false;
+									
+								}
+							
+							});
 						
 						} , function(error){
 								console.log(error.message);
@@ -193,16 +219,15 @@
 							var popup = chrome.extension.getViews({type:'popup'})[0];
 							if(popup){
 								console.log(message);
-								//popup.initFEObject();
 								
 								$(popup.document).find('#sbsavepagetext').empty()
-								$(popup.document).find('#sbsavepagetext').remove()
+								//$(popup.document).find('#sbsavepagetext').remove()
 							
 							}
 							window.sbnotification = webkitNotifications.createNotification(
 									  'images/scrap128.png',  // icon url - can be relative
 									  'Scrapbook',  // notification title
-									  'Page scrapped.'  // notification body text
+									  'Page overwritten.'  // notification body text
 								);
 							window.sbnotification.show();
 							setTimeout('window.sbnotification.cancel()',3000);

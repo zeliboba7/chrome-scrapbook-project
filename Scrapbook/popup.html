@@ -7,33 +7,35 @@
 	<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/jquery-ui-1.8.1.custom.css" media="screen">
 	<script src="js/jquery-blink.js" language="javscript" type="text/javascript"></script>
-	<script type="text/javascript" src="js/jquery.mcdropdown.js"></script>
-	<script type="text/javascript" src="js/jquery.bgiframe.js"></script>
-	<link type="text/css" href="css/jquery.mcdropdown.css" rel="stylesheet" media="all" />
-	
+
+	<script type="text/javascript" src="js/jquery.jstree.js"></script>
 	<script type="text/javascript" src="frontend.js"></script>
 	<script type="text/javascript" src="sbstorage.js"></script>
 	<script type="text/javascript" src="popup.js"></script>
-	
+	<script type="text/javascript" src="background.js"></script>
 	<!-- Core files for alert boxes-->
 	<script src="js/jquery.alerts.js" type="text/javascript"></script>
 	<link href="css/jquery.alerts.css" rel="stylesheet" type="text/css" media="screen" />
+	
 	<style type="text/css">			
 		
 		body{ font: 85% "Trebuchet MS", sans-serif ; margin: 5px;  min-width:357px;
 		overflow-x:hidden; height: '100%'}			
 		.image-add-folder {position: absolute; right: 91px ; width:19px; height:18.5px;}
-		.image-refresh-book {position: absolute; right: 91px ; width:19px; height:18.5px;}
+		.image-refresh-book {position: absolute; right: 148px ; top:98px; width:19px; height:18.5px;}
 		#sbsavepage {height: 20px; position: absolute; right: 213px; top: 7px; width: 21px;}
-		#refreshBooktext  {height: 20px; position: absolute; right: 85px; top: 7px; width: 21px;}
+		#magglass {height: 21px; top:98px; right:178px; position: absolute ; }
+
+		#refreshBooktext  {height: 20px; position: absolute; right: 62px; top: 7px; width: 21px;}
 	</style>
 </head>	
 <script>
 
 
-//Scrap the page data...
-function scrapPage(){
-	
+//Scrap the page data... Called from scrap button or from 
+function scrapPage(data){
+	//ok so this is now quik scrap: add logic to add page at bottom of scrapbook.
+	//Need to use jstree API to create the node and then focus on  the node...
 	
 	var temp = function(){
 		chrome.tabs.getSelected(null, function(tab) {
@@ -47,17 +49,13 @@ function scrapPage(){
 				jAlert('Please enter a page name to save.');
 				return;
 			}
-			title = title.value.trim()||tab.title;
-			//If the page was already scrapped and the scrapPage bitton is pressed the title/folderid etc are set by init() so no need to worry here
+			title = title.value||tab.title;//TO DO : Get this from the jAlert box.
+			//By default. 
 			params.title = title;
-			params.folderid = -1;
-			params.folderName = 'root'; //By default
+			params.folderid = data.folderid? parseInt(data.folderid): -1;
+			params.folderName = data.folderName? data.folderName: 'root'; 
 			
-			var pair =  window.bookFE.getSelectedFolder();//Return the Folder ID and the Name 
-
-			params.folderid = pair[0]==null||pair[0]==undefined || pair[0].toString().trim()==''? params.folderid : pair[0].toString().trim();
-
-			params.folderName = pair[1]==null||pair[1]==undefined  || pair[1].toString().trim()==''? params.folderName :pair[1].toString().trim();
+			
 			console.log('Creating record for page: '+params.title +' with fid'+params.folderid);
 			
 			
@@ -135,37 +133,40 @@ function scrapPage(){
 function refreshsbook(){
 	console.log('Refreshing book...');
 	var bgwindow = chrome.extension.getBackgroundPage();
-	bgwindow.flushPageMenuCache();
-	$('#refreshBook').after('<span id="refreshBooktext"  class = "refresh-sbtext" > Refreshing</span>');
-	$('#refreshBooktext').blink({delay:900});
-	window.bookFE.renderFolders(function(){
+	bgwindow.redoCache(function(){
+		$('#refreshBook').after('<span id="refreshBooktext"  class = "refresh-sbtext" > Refreshing</span>');
+		$('#refreshBooktext').blink({delay:900});
+		
 		bookFE.renderFullBook(function(){
 				console.log('Rendered all menus...');
-					$('#refreshBooktext').empty()
-					$('#refreshBooktext').remove()
-					$('#mcbook>div').append('<div><img id="refreshBook" title="Refresh book" src="images/refresh-icon.png" class="image-refresh-book sb_ui-corner-all  sb_ui-state-default" onclick="refreshsbook()"></div>')	
+					/*$('#sbtoolmenu').append('<div><img id="refreshBook" title="Refresh book" src="images/refresh-icon.png" class="image-refresh-book sb_ui-corner-all  sb_ui-state-default" onclick="refreshsbook()"></div>')	
 					$('#refreshBook').hover(
-					function() { 
-						$(this).addClass('sb_ui-state-hover'); 
-					}, 
-					function() { 
-						$(this).removeClass('sb_ui-state-hover'); 
-					});	
+						function() { 
+							$(this).addClass('sb_ui-state-hover'); 
+						}, 
+						function() { 
+							$(this).removeClass('sb_ui-state-hover'); 
+						}
+					);*/
+					$('#refreshBooktext').empty();
+					$('#refreshBooktext').remove();
+					
 
 		});
 	});
+
 }
 
 /**Call backs from the front end when pages are selected*/
-function selectedPage(event){
+function selectedPage(pageID){
 	console.log('Fetching page from SB...');
 	//Steps: Selected a new page... Get its URL of the page by using its ID. Open the page
 	//The page will send in the opentab message to the 
 	
 	var params={};
-	params.pageid = event.data.pageID //sel[0].substring(1,sel[0].length).trim();
+	params.pageid = pageID //sel[0].substring(1,sel[0].length).trim();
 	var globalWindow = chrome.extension.getBackgroundPage();
-	params.callback = function(data, notedata){//data from DB...
+	var callback = function(data, notedata){//data from DB...
 		
 		var noteDataToRender = notedata.rows;
 		
@@ -189,75 +190,55 @@ function selectedPage(event){
 		
 	
 	}
-	var bgwindow = chrome.extension.getBackgroundPage();
-
-	if(!window.bookFE){
-		window.bookFE = new scrapBookFrontEnd({
-			placeholder:'messages',folderPlaceHolder :  'foldermenu', sbookPlaceHolder : 'sbookmenu' ,  
-			dbName:bgwindow.sbookInterface.sBookInterfaceData.dbName ,dbVersion:bgwindow.sbookInterface.sBookInterfaceData.dbVersion,
-			dbSize:bgwindow.sbookInterface.sBookInterfaceData.dbSize 
-		});
-		getPageDataDB(params,  window.bookFE);
-	}else{
-		getPageDataDB(params, window.bookFE);
-	}
+	getPageDataDB(params, callback, function(error){
+			window.sbnotification = webkitNotifications.createNotification(
+				  'images/scrap48.png',  
+				  'Scrapbook',  
+				  'Error while opening page: '+error.message  // notification body text
+			);
+			window.sbnotification.show();
+			setTimeout('window.sbnotification.cancel()',3000)
+	});
 	
-	
-}
-
-/**callback to set the folderId when it is selected from DD...*/
-function selectedFolder(event){
-	
-	event.stopPropagation();//Get the folder we clicked
-	//Also close the menu programatically...
-	bookFE.closeAndFocus(event.data.folderName, event.data.folderId);
-	console.log('selected folder::'+event.data.folderName+' having id '+event.data.folderId);
 }
 
 /**When the icon is clicked check for selected folder and use that**/
-function addFolder(){
-	//var newFolder = window.prompt("Enter a folder name", "New Folder")
-	var pair =  window.bookFE.getSelectedFolder();//Return the Folder ID and the Name 
-	var folderId = -1;//default to root level
-	var level = 0;
-	var parentFolder = 'root';
+function addFolder(parentParams){
 	
 	params ={};
-	params.parentFolderId = pair[0]==null||pair[0]==undefined || pair[0].toString().trim()==''? folderId: pair[0];
+	params.parentFolderId = parseInt(parentParams.parentid);
 	
-	params.parentFolder = pair[1]==null||pair[1]==undefined  || pair[1].toString().trim()==''? parentFolder :pair[1];
+	params.parentFolder = parentParams.parentfoldername;
 
-	params.level = pair[2]==null||pair[2]==undefined  || pair[2].toString().trim()==''? level: pair[2];
+	params.level =  parseInt(parentParams.parentlevel)+1;
 	
-	if(params.parentFolderId!=-1){
-		//Level of the new folder.
-		params.parentFolderId = params.parentFolderId.toString();
-		params.level  = (params.level +1).toString();
-	}
 	
-	console.log('Adding folder to '+params.parentFolder+' having parent ID:'+params.parentFolderId+' with ');
+	console.log('Attempting to add folder to '+params.parentFolder+' having parent ID:'+params.parentFolderId);
 	
 	jPrompt('Folder Name', 'New Folder', 'Prompt Dialog', function(r) {
 		if( r && r.toString().trim()!='' ) {
 			params.folderName = r.toString().trim();
 			
-			checkAndAddFolderDB(params, function(message){
-				if(message.code == 0){
+			checkAndAddFolderDB(params, function(retParams){
+				if(retParams.code == 0){
 					
-					bookFE.callback(message);
+					//Add a new node...
+					var parentobj = $("#sbmainmenu").find('li[rel="folder"][id = '+params.parentFolderId+']');
+					$("#sbmainmenu").jstree("create_node",  parentobj , 0 , new jtf({foldername: params.folderName , folderid:retParams.folderid, level: params.level, state: 'open'}).f , function(){
+						
+						console.log('Created folder. Should appear in tree');
+					} , true )
+					//Open the node
+					$("#sbmainmenu").jstree('open_node' ,parentobj , false , false);
+					//Redo or repair cache?
 					var globalWindow = chrome.extension.getBackgroundPage();
-					globalWindow.flushFolderMenuCache();
-					globalWindow.flushPageMenuCache();
+					//TO DO: Check if WW is using lock.Push to WW...
+					globalWindow.redoCache(function(){
+							console.log('Redoing cache...')
+					});
+				}else if(retParams.code ==1){
 					
-					bookFE.renderFolders(function(){
-						bookFE.renderFullBook(function(){
-							console.log('Done rendering menus...');
-						});
-					})
-					
-				}else if(message.code ==1){
-					
-					bookFE.callback(message);
+					bookFE.callback(retParams);
 				
 				}
 			},function(error){
@@ -286,24 +267,15 @@ function addFolder(){
 
 <div>
 <button id="scrapbutton" class="sb_ui-button sb_ui-widget sb_ui-state-default sb_ui-corner-all sb_ui-button-text-only" role="button" aria-disabled="false"
-	onclick="scrapPage()">
-	<span class="sb_ui-button-text">Scrap This Page</span>
+	onclick="scrapPage({})">
+	<span class="sb_ui-button-text">Quick Scrap</span>
 </button>
 </div>
 <div>
-Enter Page Name:
+Page name to scrap:
 <input type="text" id="PageName" />
 </div>
-<strong title='Select a folder to save the page.'>Select folder: </strong>
 
-<div id = 'mcdfolders'>
-	<input type="text" value = '' name = 'folder' id="folder" />
-</div>
-
-<div>
-	<ul id="foldermenu" class="mcdropdown_menu" >
-	</ul>
-</div>
 
 
 
@@ -314,17 +286,13 @@ Enter Page Name:
 <HR WIDTH="100%" SIZE="3"> 
 
 <strong title='Select a page to open'>My Scrapbook</strong>
-<div id ='mcbook'  style = 'min-height: 100%; height: auto;'>
-	<input type="text" name="sbook" id="sbook" value="" size="30" onfocus="value=''" />
+<div id = 'sbtoolmenu'>
+<div><input type="text" id="sbsearch"></input></div>
+<div><img src="images/mag.png" id = "magglass"  title = "Search"><img></div>
 </div>
-
-<div>
-	<ul id="sbookmenu" class="mcdropdown_menu" >
-		
-		
-	</ul>
+<div id="sbmainmenu" >
+	
 </div>
-
 </body>
 
 </html>

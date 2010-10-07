@@ -23,9 +23,9 @@
   "content_scripts": [
 		{
 		  "matches": ["http://*/*","file:///*/*", "https://*/*"],
-		  "css":["css/jquery.mcdropdown.css", "css/sbui.css", "css/jquery-ui-1.8.1.custom.css", "css/jquery.alerts.css"],
+		  "css":["css/sbui.css", "css/jquery-ui-1.8.1.custom.css", "css/jquery.alerts.css"],
 		  "images":["images/save.png"],	
-		  "js": [ "js/jquery-1.4.2.min.js", "js/jquery-ui-1.8.4.custom.min.js", "js/jquery.alerts.js" ,"js/jquery.bgiframe.js", "scrobblepage.js", "contentscript.js"]
+		  "js": [ "js/jquery-1.4.2.min.js", "js/jquery-ui-1.8.4.custom.min.js", "js/jquery.alerts.js" , "scrobblepage.js", "contentscript.js"]
 		 
 		}
 	]
