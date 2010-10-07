@@ -40,7 +40,7 @@ $(document).ready(function(){
 			 iter_ct++;
 			 h_timer = setTimeout("setH()", 100);
 		 }else{
-			 
+			 $($('#sbinnerframe')[0].contentDocument).find('noscript').remove();//No scripts make page look bad...
 			 clearTimeout(h_timer);
 		 }
 		 

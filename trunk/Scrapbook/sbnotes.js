@@ -7,8 +7,10 @@ function Note()
     var note = this.doc.createElement('div');
     
     $(note).attr('id','sbnotes5832');
+    $(note).resizable();
+    $(note).draggable();
     //note.className = 'note';
-    //$(note).addClass("sb_ui-widget-content sb_ui-draggable");
+    
     note.addEventListener('mousedown', function(e) { return self.onMouseDown(e) }, false);
     note.addEventListener('click', function() { return self.onNoteClick() }, false);
     this.note = note;
@@ -21,7 +23,7 @@ function Note()
     var edit = this.doc.createElement('div');
     //edit.className = 'edit';
     edit.setAttribute('contenteditable', true);
-    edit.addEventListener('keyup', function() { return self.onKeyUp() }, false);
+    //edit.addEventListener('keyup', function() { return self.onKeyUp() }, false);
     note.appendChild(edit);
     this.editField = edit;
 
@@ -191,8 +193,6 @@ Note.prototype = {
         //this.cancelPendingSave();
 
         var note = this;
-        
-        
         var duration = event.shiftKey ? 2 : .25;
         this.note.style.webkitTransition = '-webkit-transform ' + duration + 's ease-in, opacity ' + duration + 's ease-in';
         this.note.offsetTop; // Force style recalc
@@ -204,87 +204,7 @@ Note.prototype = {
         window.notes.remove(this.id);
         setTimeout(function() { document.body.removeChild(self.note) }, duration * 1000);
     },
-	// This saves it on the db as soon as we write...
-	// 
-    /*saveSoon: function()
-    {
-        this.cancelPendingSave();
-        var self = this;
-        this._saveTimer = setTimeout(function() { self.save() }, 200);
-    },
-
-    cancelPendingSave: function()
-    {
-        if (!("_saveTimer" in this))
-            return;
-        clearTimeout(this._saveTimer);
-        delete this._saveTimer;
-    },
-
-    save: function()
-    {
-        this.cancelPendingSave();
-
-        if ("dirty" in this) {
-            this.timestamp = new Date().getTime();
-            delete this.dirty;
-        }
-		
-        var note = this;
-        console.log(note.text, note.timestamp, note.left, note.top, note.zIndex, note.id, notes.type);
-    },*/
 	
-
-    onMouseDown: function(e)
-    {
-        captured = this;
-        this.startX = e.clientX - this.note.offsetLeft;
-        this.startY = e.clientY - this.note.offsetTop;
-        this.zIndex = ++window.notes.highestZ;
-
-        var self = this;
-        if (!("mouseMoveHandler" in this)) {
-            this.mouseMoveHandler = function(e) { return self.onMouseMove(e) }
-            this.mouseUpHandler = function(e) { return self.onMouseUp(e) }
-        }
-
-        this.doc.addEventListener('mousemove', this.mouseMoveHandler, true);
-        this.doc.addEventListener('mouseup', this.mouseUpHandler, true);
-
-        return false;
-    },
-
-    onMouseMove: function(e)
-    {
-        if (this != captured)
-            return true;
-
-        this.left = e.clientX - this.startX + 'px';
-        this.top = e.clientY - this.startY + 'px';
-        return false;
-    },
-
-    onMouseUp: function(e)
-    {
-        this.doc.removeEventListener('mousemove', this.mouseMoveHandler, true);
-        this.doc.removeEventListener('mouseup', this.mouseUpHandler, true);
-		//this.mouseMoveHandler.removeEventListener = null;
-		//this.mouseUpHandler = null;
-        //window.saveSBSoon()
-        return false;
-    },
-
-    onNoteClick: function(e)
-    {
-        this.editField.focus();
-        getSelection().collapseToEnd();
-    },
-
-    onKeyUp: function()
-    {
-        this.dirty = true;
-        //window.saveSBSoon();
-    },
 }
 function modifiedString(date)
 {

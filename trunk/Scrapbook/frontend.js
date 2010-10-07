@@ -58,7 +58,7 @@ function scrapBookFrontEnd(params){
 		//TODO: Wait for cache to load...
 		//Always have cache...
 		var callback = callback;
-		
+		var self = this;
 		$("#sbmainmenu").jstree('destroy');
 		$("#sbmainmenu").bind('loaded.jstree', function(e,data){
 						$(e.currentTarget).find('a').each(function(){
@@ -140,30 +140,67 @@ function scrapBookFrontEnd(params){
 						"items": function(node){
 
 								if($(node).attr('type')=='folder'){
-									return({
-											"add":{
-												"label"				: "Add a folder",
-												"action"			: function (obj) { window.addFolder({ parentfoldername: $(obj[0]).children('a').text().trim(), parentid : $(obj[0]).attr('id'), parentlevel:  $(obj[0]).attr('level')}) },
+									if($(node).attr('id')!=-1){
+										return({
+												"add":{
+													"label"				: "Add a folder",
+													"action"			: function (obj) { window.addFolder({ parentfoldername: $(obj[0]).children('a').text().trim(), parentid : $(obj[0]).attr('id'), parentlevel:  $(obj[0]).attr('level')}) },
+													
+													"_class"			: "class",	// class is applied to the item LI node
+													"separator_before"	: false,	// Insert a separator before the item
+													"separator_after"	: true,		// Insert a separator after the item
+													// false or string - if does not contain `/` - used as classname
+													"icon"				: false,
 												
-												"_class"			: "class",	// class is applied to the item LI node
-												"separator_before"	: false,	// Insert a separator before the item
-												"separator_after"	: true,		// Insert a separator after the item
-												// false or string - if does not contain `/` - used as classname
-												"icon"				: false,
-											
-											},
-											"scrap":{
-												"label"				: "Scrap the page",
-												"action"			: function (obj) { window.scrapPage({folderName: $(obj[0]).children('a').text().trim(), folderid: $(obj[0]).attr('id')}) },
+												},
+												"scrap":{
+													"label"				: "Scrap the page",
+													"action"			: function (obj) { window.scrapPage({folderName: $(obj[0]).children('a').text().trim(), folderid: $(obj[0]).attr('id')}) },
+													
+													"_class"			: "class",	// class is applied to the item LI node
+													"separator_before"	: true,	// Insert a separator before the item
+													"separator_after"	: false,		// Insert a separator after the item
+													// false or string - if does not contain `/` - used as classname
+													"icon"				: false,
+												},
+												"delete":{
+													"label"				: "Delete the folder",
+													"action"			: function (obj) { self.deleteFolder({folderid: $(obj[0]).attr('id')}) },
+													
+													"_class"			: "class",	// class is applied to the item LI node
+													"separator_before"	: true,	// Insert a separator before the item
+													"separator_after"	: false,		// Insert a separator after the item
+													// false or string - if does not contain `/` - used as classname
+													"icon"				: false,
+												} 
+										})
+									}else{
+										return({
+												"add":{
+													"label"				: "Add a folder",
+													"action"			: function (obj) { window.addFolder({ parentfoldername: $(obj[0]).children('a').text().trim(), parentid : $(obj[0]).attr('id'), parentlevel:  $(obj[0]).attr('level')}) },
+													
+													"_class"			: "class",	// class is applied to the item LI node
+													"separator_before"	: false,	// Insert a separator before the item
+													"separator_after"	: true,		// Insert a separator after the item
+													// false or string - if does not contain `/` - used as classname
+													"icon"				: false,
 												
-												"_class"			: "class",	// class is applied to the item LI node
-												"separator_before"	: true,	// Insert a separator before the item
-												"separator_after"	: false,		// Insert a separator after the item
-												// false or string - if does not contain `/` - used as classname
-												"icon"				: false,
-											} 
-											
-									})
+												},
+												"scrap":{
+													"label"				: "Scrap the page",
+													"action"			: function (obj) { window.scrapPage({folderName: $(obj[0]).children('a').text().trim(), folderid: $(obj[0]).attr('id')}) },
+													
+													"_class"			: "class",	// class is applied to the item LI node
+													"separator_before"	: true,	// Insert a separator before the item
+													"separator_after"	: false,		// Insert a separator after the item
+													// false or string - if does not contain `/` - used as classname
+													"icon"				: false,
+												} 
+												
+										})
+										
+									}
 								}else if($(node).attr('type')=='page'){
 									return({
 											"open":{
@@ -203,8 +240,31 @@ function scrapBookFrontEnd(params){
 				})	//End of 	$("#sbmainmenu").jstree(...
 		
 	}
+	this.deleteFolder = function(params){
+		//TO DO: Warn the user...
+		var self = this;
+		jConfirm("Delete folder & subpages(this cant be undone)?", 'Confirmation Dialog', function(r) {
+			if(r==true){
+					deleteFolderDB({folderid: params.folderid},function(params){
+					console.log('Deleted all folders...');
+					var bgwindow = chrome.extension.getBackgroundPage();
+					
+					bgwindow.redoCache(function(){
+						self.renderFullBook(function(){
+							console.log('Cache redone full book renderd after folder delete...');
+						})
+					})
+				},function(err){
+					console.log(err.message);
+				})
+			}
+			
+		})
+		
+	}
 	
 }
 //gather events and 
 function searchText(){
 }
+
