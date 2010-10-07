@@ -109,6 +109,48 @@ function deletePagesDB(params,callback,failurecallback){
 	
 	
 }
+/*Will be recursive DFS deletion...*/
+function deleteFolderDB(params, callback, failureCallback ){
+	//Need to get all sub folder and delete them too. 
+	var folderid = params.folderid;
+	var globalWindow = chrome.extension.getBackgroundPage();
+	
+	function recurse(data){
+		if(data.rows.length<1){
+			//Just delete the folder
+			stmt = ['delete from sbfolder where folderid='+folderid];
+
+			function deleteLeaf(data){
+				console.log('Deleted child fid:'+folderid);
+				if(!params.recurse || params.recurse !='Y'){
+					callback({status: 'OK' , message: 'Deleted all folders' })
+				}
+				
+			}
+			doDMLTransactions(new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData), stmt, null, [deleteLeaf], failureCallback,null);
+			
+		}else{
+			for(i =0 ; i < data.rows.length; i++ ){
+				deleteFolderDB({folderid: data.rows.item(i).folderid , recurse :'Y'}, callback, failureCallback )
+			}//
+			//After deleting all the child nodes, delete the parent.
+			stmt = ['delete from sbfolder where folderid='+folderid];
+			function deleteParent(data){
+				console.log('Deleted parent fid:'+folderid);
+				if(!params.recurse || params.recurse !='Y'){
+					callback({status: 'OK' , message: 'Deleted all folders' })
+				}
+				
+			}
+			doDMLTransactions(new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData), stmt, null, [deleteParent], failureCallback,null);
+		}
+	}
+	//Who were the parents...
+	stmt = ['select folderid from sbfolder where parentid ='+folderid];
+	doDMLTransactions(new wrapperDBObj(globalWindow.sbookInterface.sBookInterfaceData), stmt, null, [recurse], failureCallback,null);
+}
+
+
 function isOldPageInDB(params,callback,failurecallback){
 	
 	var nick = protectInjection(params.title);

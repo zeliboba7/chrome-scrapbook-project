@@ -124,7 +124,7 @@ function scrappedpage(params){
 				  'Page scrapped'  // notification body text
 		);
 		window.sbnotification.show();
-		setTimeout('window.sbnotification.cancel()',3000)
+		setTimeout('window.sbnotification.cancel()',3000);
 		
 	} , true );
 	//Open the node

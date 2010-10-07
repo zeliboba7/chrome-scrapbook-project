@@ -167,7 +167,7 @@ function DocumentSaver() {
 		newClone = this.processMeta(clone, elem);
 		break;
 	case 'div':
-		if(elem.id && elem.id.toString().trim()== 'sbsite-bottom-bar' || elem.id.trim()=='sbnotes5832'){
+		if((elem.id && elem.id.toString().trim()== 'sbsite-bottom-bar') || elem.id.trim()=='sbnotes5832'){
 			return;
 		}
 	case 'iframe':
