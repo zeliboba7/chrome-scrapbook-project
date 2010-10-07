@@ -1,0 +1,30 @@
+#summary One-sentence summary of this page.
+
+= Scrapbook FAQ=
+
+1) How is this different, i already know a dozen annotation extensions?
+
+This is supposed to be a close clone of the firefox scrapbook.  Most plugins may save offline, but not annotate [http://code.google.com/p/chrome-scrapbook/ 
+chrome-scrapbook]. 
+Some will annotate but not save offline(diigo). 
+There was no good extension for chrome that was like firefox. So i made this.
+
+2) How do I use this?
+
+You should follow the videos on the main [https://chrome.google.com/extensions/detail/fihabipakbgncingdhhdidlbhneeicne extension page] to see how it works
+
+3) How was it made
+
+Its written in HTML5 features like webdatabases, webworkers, sandboxing etc and written in jQuery. The UI is the jsTree jQuery plugin.
+
+4) Where are the pages saved?
+
+Eugeniy has answered this question well enough 
+[http://code.google.com/p/chrome-scrapbook/wiki/ExtractingPages here] 
+
+= Details =
+
+Add your content here.  Format your content with:
+  * Text in *bold* or _italic_
+  * Headings, paragraphs, and lists
+  * Automatic links to other wiki pages
