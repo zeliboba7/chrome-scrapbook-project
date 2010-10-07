@@ -89,6 +89,7 @@
 ----------------------------------*/
 
 /* states and images */
+.ui-icon {background-image: url(images/ui-icons_cd0a0a_256x240.png); }
 .sb_ui-icon { width: 16px; height: 16px; background-image: url(images/ui-icons_469bdd_256x240.png); }
 .sb_ui-widget-content .sb_ui-icon {background-image: url(images/ui-icons_469bdd_256x240.png); }
 .sb_ui-widget-header .sb_ui-icon {background-image: url(images/ui-icons_d8e7f3_256x240.png); }
