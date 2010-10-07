@@ -22,9 +22,22 @@ Its written in HTML5 features like webdatabases, webworkers, sandboxing etc and 
 Eugeniy has answered this question well enough 
 [http://code.google.com/p/chrome-scrapbook/wiki/ExtractingPages here] 
 
-= Details =
+5) I open Pages from the scrapbook and its either  not rendering/elements  or page sections are distorted: 
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+ Most likely a Javascript is rendering the style of these pages. The plugin downloads some data from the page's server to save it, so maybe your inter net connection may have bummed out on you when you were saving.... you can try saving and opening again... Any one interested in improving the rendering engine is more than welcome...
+
+6) I am highlighting some text but the annotation marker keeps saying "please select some text first"?
+
+ most likely the text is in an Iframe and that feature is yet to be implemented...
+
+7) I see an ugly ass scroll bar inside a scroll bar like in an iframe. Should I shoot you?
+
+ Well this is embarrasing...I have tried very hard to remove them(hiding them). I am sorry.  But there is a very good reason for rendering the page inside an iframe. You can read about sand boxing and XSS in the description of the plugin and why its necessary to make this work and the reason why no extension(AFAIK) has been able to do on screen annotation of pages stored locally in SQL backend. I got an Iframe in just 1 page i tested out of a sample of 25.
+
+
+= Known problems/limitations =
+
+1) Some pages wont be scrapped, The pages displayed and saved are devoid of javascripts so you may not be able to save your gmail page. This is unavoidable. But apart from Gmail I have seen this reproducing pages with 90% accuracy.
+
+2) Iframe highlighting: text in embedded iframes will not be highlighted. This is a problem i would like to solve very much. Requires work. you can make sticky notes though.
+
