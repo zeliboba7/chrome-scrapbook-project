@@ -1,7 +1,7 @@
 #summary One-sentence summary of this page.
 
 = TO DO =
-Small but important Change list:
+== Small but important Change list ==
 1) Change cursor on highlighting allow user to select text after button press...Bind escape button to quit highlighting. Change mouse pointer to the highlighter.
 2) Show highlighter color as tooltip and Button hover
 3) Renaming of pages/folders
@@ -9,7 +9,7 @@ Small but important Change list:
 5) Tagging support from scriptaculous.
 
 
-Major changes
+== Major changes== 
 1)Multi scrapbook
 2)Tagging support using Tag clouds.
 3)Merging/Exporting Scrapbook.
