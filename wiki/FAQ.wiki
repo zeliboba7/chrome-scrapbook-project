@@ -29,7 +29,7 @@ The other possibility is that the extension downloads some data from the page's 
 
 most likely the text is in an Iframe and that feature is yet to be implemented...Highlighting text in iframes is yet to be implemented. You can attach sticky notes though.
 
-7) I see an ugly ass scroll bar inside a scroll bar like in an iframe. Should I shoot you?
+7) I see an ugly ass scroll bar inside another scroll bar, like in an iframe!!?? Should I shoot you?
 
 Well this is embarrasing...I have tried very hard to remove them(hiding them). I am sorry.  But there is a very good reason for rendering the page inside an iframe. You can read about sand boxing and XSS in the description of the plugin and why its necessary to make this work and the reason why no extension(AFAIK) has been able to do on screen annotation of pages stored locally in SQL backend. I got an Iframe in just 1 page i tested out of a sample of 25.
 
