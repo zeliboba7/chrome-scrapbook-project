@@ -2,15 +2,15 @@
 
 = TO DO =
 == Small but important Change list ==
-1) Change cursor on highlighting allow user to select text after button press...Bind escape button to quit highlighting. Change mouse pointer to the highlighter[TESTING]
+1) Change cursor on highlighting allow user to select text after button press...Bind escape button to quit highlighting. Change mouse pointer to the highlighter*[TESTING*]
 
-2) Show highlighter color as tooltip and Button hover[TESTING]
+2) Show highlighter color as tooltip and Button hover*[TESTING*]
 
-3) Renaming of pages/folders[DONE]
+3) Renaming of pages/folders*[DONE*]
 
-4) Dragging and dropping pages[IN PROGRESS]
+4) Dragging and dropping pages*[IN PROGRESS*]
 
-5) Semi supervised organization of pages[IN PROGRESS]
+5) Semi supervised organization of pages*[IN PROGRESS*]
 
 
 == Major changes== 
