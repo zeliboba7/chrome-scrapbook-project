@@ -24,11 +24,12 @@ Eugeniy has answered this question well enough
 
 5) I open Pages from the scrapbook and its either  not rendering/elements  or page sections are distorted: 
 
-Most likely a Javascript is rendering the style of these pages. The plugin downloads some data from the page's server to save it, so maybe your inter net connection may have bummed out on you when you were saving.... you can try saving and opening again... Any one interested in improving the rendering engine is more than welcome...
+Most likely a Javascript is rendering the style of these pages. Generally javascript is not downloaded by the extension so bummer. That also means that there will be reduced interaction with events(like hover and clicks).
+The other possibility is that the extension downloads some data from the page's server to save it, so maybe your inter net connection may have bummed out on you when you were saving the page.... In that case you can try saving and opening again... 
 
 6) I am highlighting some text but the annotation marker keeps saying "please select some text first"?
 
-most likely the text is in an Iframe and that feature is yet to be implemented...
+most likely the text is in an Iframe and that feature is yet to be implemented...Highlighting text in iframes is yet to be implemented. You can attach sticky notes though.
 
 7) I see an ugly ass scroll bar inside a scroll bar like in an iframe. Should I shoot you?
 
