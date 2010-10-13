@@ -16,6 +16,6 @@
 == Major changes== 
 1)Multi scrapbook
 
-2)Tagging support using Tag clouds.
+2)Auto organization support.
 
 3)Merging/Exporting Scrapbook.
