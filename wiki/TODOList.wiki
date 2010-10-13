@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary The cave and club requirements of prehistori man.
 
 = TO DO =
 == Small but important Change list ==
@@ -14,8 +14,10 @@
 
 
 == Major changes== 
-1)Multi scrapbook
+1)Multi scrapbook. 
 
-2)Auto organization support.
+2)Import scrapbook from firefox, import bookmarks
 
-3)Merging/Exporting Scrapbook.
+3)Auto organization support.
+
+4)Merging/Exporting Scrapbook.
