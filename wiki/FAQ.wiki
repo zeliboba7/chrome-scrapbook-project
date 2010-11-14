@@ -19,12 +19,13 @@ Its written in HTML5 features like webdatabases, webworkers, sandboxing etc and 
 
 In windows you can see a file in the location .
 
-'C:\Documents and Settings\'<username'>\Local Settings\Application Data\Google\Chrome\User Data\Default\databases\chrome-extension_fihabipakbgncingdhhdidlbhneeicne_0' 
+{{{ C:\Documents and Settings\<username>\Local Settings\Application Data\Google\Chrome\User Data\Default\databases\chrome-extension_fihabipakbgncingdhhdidlbhneeicne_0 }}}
 
 In Linux its typically in 
 
-~/.config/chromium/Default/databases/chrome-extension_fihabipakbgncingdhhdidlbhneeicne_0
+{{{~/.config/chromium/Default/databases/chrome-extension_fihabipakbgncingdhhdidlbhneeicne_0 }}}
 
+this file contains all your data. My personal favourite idea to back up this file is to link that folder/file with drop box. Or you could just copy it over to some location to keep it safe...
 
 5) I open Pages from the scrapbook and its either  not rendering/elements  or page sections are distorted: 
 
