@@ -17,8 +17,14 @@ Its written in HTML5 features like webdatabases, webworkers, sandboxing etc and 
 
 4) Where are the pages saved?
 
-Eugeniy has answered this question well enough 
-[http://code.google.com/p/chrome-scrapbook/wiki/ExtractingPages here] 
+In windows you can see a file in the location .
+
+'C:\Documents and Settings\'<username'>\Local Settings\Application Data\Google\Chrome\User Data\Default\databases\chrome-extension_fihabipakbgncingdhhdidlbhneeicne_0' 
+
+In Linux its typically in 
+
+~/.config/chromium/Default/databases/chrome-extension_fihabipakbgncingdhhdidlbhneeicne_0
+
 
 5) I open Pages from the scrapbook and its either  not rendering/elements  or page sections are distorted: 
 
